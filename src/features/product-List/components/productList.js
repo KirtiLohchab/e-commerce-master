@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { increment, incrementAsync, selectCount } from "./productSlice";
+import { increment, incrementAsync, selectCount } from "../productSlice";
 
 import { Dialog, Disclosure, Menu, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
@@ -14,6 +14,7 @@ import {
   ChevronRightIcon,
 } from "@heroicons/react/20/solid";
 import { FaCartPlus } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const sortOptions = [
   { name: "Most Popular", href: "#", current: true },
@@ -411,39 +412,41 @@ export default function ProductList() {
 
                   <div className=" grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                     {products.map((product) => (
-                      <div key={product.id} className="group relative">
-                        <div className="w-full overflow-hidden rounded-md bg-gray-200 hover:shadow-xl">
-                          <img
-                            src={product.imageSrc}
-                            alt={product.imageAlt}
-                            className="object-center object-cover w-full "
-                          />
+                      <Link to="/productDetails">
+                        <div key={product.id} className="group relative">
+                          <div className="w-full overflow-hidden rounded-md bg-gray-200 hover:shadow-xl">
+                            <img
+                              src={product.imageSrc}
+                              alt={product.imageAlt}
+                              className="object-center object-cover w-full "
+                            />
 
-                          <div className="px-2">
-                            <h3 className="text-lg font-bold text-gray-900">
-                              {product.name}
-                            </h3>
-                            <p className=" truncate text-sm text-gray-500">
-                              {product.description}
-                            </p>
-                          </div>
-                          <div className="flex justify-between px-2">
-                            <span className="block  font-semibold">
-                              Price: ₹{product.discountedPrice}
-                            </span>
-                            <span className="line-through  opacity-50">
-                              ₹{product.price}
-                            </span>
-                            <span className="text-red-800 ">
-                              {product.discount}% Off
-                            </span>
+                            <div className="px-2">
+                              <h3 className="text-lg font-bold text-gray-900">
+                                {product.name}
+                              </h3>
+                              <p className=" truncate text-sm text-gray-500">
+                                {product.description}
+                              </p>
+                            </div>
+                            <div className="flex justify-between px-2">
+                              <span className="block  font-semibold">
+                                Price: ₹{product.discountedPrice}
+                              </span>
+                              <span className="line-through  opacity-50">
+                                ₹{product.price}
+                              </span>
+                              <span className="text-red-800 ">
+                                {product.discount}% Off
+                              </span>
 
-                            {/* <button className="ml-3 text-red-800 hover:text-red-600">
+                              {/* <button className="ml-3 text-red-800 hover:text-red-600">
                               <FaCartPlus size={24} />
                             </button> */}
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      </Link>
                     ))}
                   </div>
                 </div>

@@ -237,12 +237,14 @@ export function Cart() {
                   Back to shop
                 </button>
               </Link>
-              <button
-                type="button"
-                className="rounded-md border  px-10 py-3 text-md font-semibold text-white bg-blue-500 hover:bg-blue-700 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
-              >
-                Checkout
-              </button>
+              <Link to="/checkout">
+                <button
+                  type="button"
+                  className="rounded-md border  px-10 py-3 text-md font-semibold text-white bg-blue-500 hover:bg-blue-700 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+                >
+                  Checkout
+                </button>
+              </Link>
             </div>
           </section>
         </form>

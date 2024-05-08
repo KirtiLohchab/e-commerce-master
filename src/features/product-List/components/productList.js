@@ -1,7 +1,6 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { increment, incrementAsync, selectCount } from "../productSlice";
-
+import { fetchAllProductsAsync, selectAllProducts } from "../productSlice";
 import { Dialog, Disclosure, Menu, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import {
@@ -13,7 +12,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from "@heroicons/react/20/solid";
-import { FaCartPlus } from "react-icons/fa";
+import { FaCartPlus, FaRegHeart } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 const sortOptions = [
@@ -23,13 +22,7 @@ const sortOptions = [
   { name: "Price: Low to High", href: "#", current: false },
   { name: "Price: High to Low", href: "#", current: false },
 ];
-const subCategories = [
-  { name: "Totes", href: "#" },
-  { name: "Backpacks", href: "#" },
-  { name: "Travel Bags", href: "#" },
-  { name: "Hip Bags", href: "#" },
-  { name: "Laptop Sleeves", href: "#" },
-];
+
 const filters = [
   {
     id: "color",
@@ -67,66 +60,14 @@ const filters = [
     ],
   },
 ];
-const products = [
-  {
-    id: 1,
-    name: "Basic Tee",
-    href: "#",
-    imageSrc:
-      "https://th.bing.com/th/id/OIP.BqK-46-v3m0-O8pyyMpD4gAAAA?w=186&h=279&c=7&r=0&o=5&dpr=1.4&pid=1.7",
-    imageAlt: "product image",
-    description: "Front of men's Basic Tee in black.",
-    discountedPrice: "3500",
-    price: "7000",
-    discount: "50",
-    color: "Black",
-  },
-  {
-    id: 2,
-    name: "Basic Tee",
-    href: "#",
-    imageSrc:
-      "https://th.bing.com/th/id/OIP.29fwSpnGVwe6cpfc83W2xAAAAA?w=186&h=279&c=7&r=0&o=5&dpr=1.4&pid=1.7",
-    imageAlt: "product image",
-    description: "Front of men's Basic Tee in black.",
-    discountedPrice: "3500",
-    price: "7000",
-    discount: "50",
-    color: "Black",
-  },
-  {
-    id: 3,
-    name: "Basic Tee",
-    href: "#",
-    imageSrc:
-      "https://th.bing.com/th/id/OIP.FlkGrWe-tUTAYWN753a5YQHaJN?w=186&h=279&c=7&r=0&o=5&dpr=1.4&pid=1.7",
-    imageAlt: "product image",
-    description: "Front of men's Basic Tee in black.",
-    discountedPrice: "3500",
-    price: "7000",
-    discount: "50",
-    color: "Black",
-  },
-  {
-    id: 4,
-    name: "Basic Tee",
-    href: "#",
-    imageSrc:
-      "https://th.bing.com/th/id/OIP.zDDACv36bX7S9P6nvlyDowAAAA?w=180&h=270&c=7&r=0&o=5&dpr=1.4&pid=1.7",
-    imageAlt: "product image",
-    description: "Front of men's Basic Tee in black.",
-    discountedPrice: "3500",
-    price: "7000",
-    discount: "50",
-    color: "Black",
-  },
-];
 
 export default function ProductList() {
-  const count = useSelector(selectCount);
   const dispatch = useDispatch();
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-
+  const products = useSelector(selectAllProducts);
+  useEffect(() => {
+    dispatch(fetchAllProductsAsync());
+  }, [dispatch]);
   return (
     <div className="bg-white">
       <div>
@@ -176,20 +117,6 @@ export default function ProductList() {
 
                   {/* Filters */}
                   <form className="mt-4 border-t border-gray-200">
-                    <h3 className="sr-only">Categories</h3>
-                    <ul
-                      role="list"
-                      className="px-2 py-3 font-medium text-gray-900"
-                    >
-                      {subCategories.map((category) => (
-                        <li key={category.name}>
-                          <a href={category.href} className="block px-2 py-3">
-                            {category.name}
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
-
                     {filters.map((section) => (
                       <Disclosure
                         as="div"
@@ -332,17 +259,7 @@ export default function ProductList() {
             <div className="grid grid-cols-1 gap-x-5 gap-y-10 lg:grid-cols-4">
               {/* Filters */}
               <form className="hidden lg:block">
-                <h3 className="sr-only">Categories</h3>
-                <ul
-                  role="list"
-                  className="space-y-4 border-b border-gray-200 pb-6 text-sm font-medium text-gray-900"
-                >
-                  {subCategories.map((category) => (
-                    <li key={category.name}>
-                      <a href={category.href}>{category.name}</a>
-                    </li>
-                  ))}
-                </ul>
+                <h3 className="text-xl font-semibold">Filters</h3>
 
                 {filters.map((section) => (
                   <Disclosure
@@ -406,48 +323,60 @@ export default function ProductList() {
               {/* Product grid */}
               <div className="lg:col-span-3">
                 <div className="bg-white ">
-                  {/* <h2 className="text-2xl font-bold tracking-tight text-gray-900">
-                      Customers also purchased
-                    </h2> */}
-
                   <div className=" grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                    {products.map((product) => (
-                      <Link to="/productDetails">
-                        <div key={product.id} className="group relative">
-                          <div className="w-full overflow-hidden rounded-md bg-gray-200 hover:shadow-xl">
-                            <img
-                              src={product.imageSrc}
-                              alt={product.imageAlt}
-                              className="object-center object-cover w-full "
-                            />
+                    {products &&
+                      products.map((product) => (
+                        <Link to="/productDetails">
+                          <div key={product.id} className="group relative">
+                            <div className="w-full overflow-hidden rounded-md bg-gray-200 hover:shadow-xl">
+                              <img
+                                src={product.imgSrc}
+                                alt={product.brand}
+                                className="object-center object-cover w-full "
+                              />
 
-                            <div className="px-2">
-                              <h3 className="text-lg font-bold text-gray-900">
-                                {product.name}
-                              </h3>
-                              <p className=" truncate text-sm text-gray-500">
-                                {product.description}
-                              </p>
-                            </div>
-                            <div className="flex justify-between px-2">
-                              <span className="block  font-semibold">
-                                Price: ₹{product.discountedPrice}
-                              </span>
-                              <span className="line-through  opacity-50">
-                                ₹{product.price}
-                              </span>
-                              <span className="text-red-800 ">
-                                {product.discount}% Off
-                              </span>
+                              <div className="px-2">
+                                <h3 className="text-lg font-bold text-gray-900">
+                                  {product.brand}
+                                </h3>
+                                <p className=" truncate text-sm text-gray-500">
+                                  {product.name}
+                                </p>
+                              </div>
+                              <div className=" flex justify-between px-2">
+                                <span className="block  font-semibold">
+                                  {product.discountedPrice}
+                                </span>
+                                <span className="line-through  opacity-50">
+                                  {product.Price}
+                                </span>
+                                <span className="text-green-600 ">
+                                  {product.discountPercentage}
+                                </span>
 
-                              {/* <button className="ml-3 text-red-800 hover:text-red-600">
-                              <FaCartPlus size={24} />
-                            </button> */}
+                                <div class="flex flex-col right-4 absolute top-3">
+                                  <div>
+                                    <button>
+                                      <FaRegHeart
+                                        class="text-red-800"
+                                        size={24}
+                                      />
+                                    </button>
+                                  </div>
+                                  <div>
+                                    <button>
+                                      <FaCartPlus
+                                        class="text-red-800"
+                                        size={24}
+                                      />
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </Link>
-                    ))}
+                        </Link>
+                      ))}
                   </div>
                 </div>
               </div>
